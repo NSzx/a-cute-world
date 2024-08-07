@@ -1,6 +1,6 @@
-import {World} from "./world/World";
+import { Game } from "./Game"
 
 window.addEventListener("load", () => {
-    const world = new World()
-    document.getElementById("world-container")?.append(world.canvas)
+    const game = new Game(document.getElementById("world-container")!)
+    game.start()
 })

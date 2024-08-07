@@ -1,32 +1,79 @@
+import { Rectangle } from "./shapes/Rectangle"
+import { Inputs } from "../controls/Inputs"
+import {
+    INITIAL_VIEWPORT_HEIGHT,
+    INITIAL_VIEWPORT_WIDTH,
+    WORLD_HEIGHT,
+    WORLD_WIDTH
+} from "../utils/constants"
+import { Item } from "../world/items/Item"
+import {
+    minmax,
+    withEvents
+} from "../utils"
 
 
-export class Camera {
+export class Camera extends withEvents(Rectangle) {
 
-    readonly canvas: HTMLCanvasElement
-    readonly context: CanvasRenderingContext2D
-    private readonly fpsInterval: number
+    public renderScale: number = 1
+    private renderWidth: number = INITIAL_VIEWPORT_WIDTH
+    private renderHeight: number = INITIAL_VIEWPORT_HEIGHT
 
-    constructor(public x = 0,
-                public y = 0,
-                public readonly width = 1600,
-                public readonly height = 900,
-                public readonly fps = 60) {
-        this.canvas = document.createElement("canvas")
-        this.canvas.width = width;
-        this.canvas.height = height;
-        this.context = this.canvas.getContext("2d")!
-        this.fpsInterval = 1000 / fps
+    constructor() {
+        super(WORLD_WIDTH / 2, WORLD_HEIGHT / 2, INITIAL_VIEWPORT_WIDTH, INITIAL_VIEWPORT_HEIGHT)
     }
 
-    private lastTick = 0
-    draw = () => {
-        requestAnimationFrame(this.draw);
+    update(inputs: Inputs): void {
+        this.move(inputs.direction.x * 30, inputs.direction.y * 30)
+    }
 
-        const currentTick = performance.now();
-        const elapsed = currentTick - this.lastTick;
-        if (elapsed > this.fpsInterval) {
-            this.lastTick = currentTick - (elapsed % this.fpsInterval);
+    track(item: Item): void {
+        let head = item.mainShape.head
+        this.moveTo(head.x, head.y)
+    }
 
-        }
+    resize(newWidth: number, newHeight: number): void {
+        this.renderWidth = newWidth
+        this.renderHeight = newHeight
+        this.scaleTo(this.renderScale)
+    }
+
+    move(dx: number, dy: number): Camera {
+        return this.moveTo(this.x + dx, this.y + dy)
+    }
+
+    moveTo(x: number, y: number): Camera {
+        this.x = x
+        this.y = y
+        this.updateBorders()
+        this.dispatchEvent(new Event("updated"))
+        return this
+    }
+
+    asRectangle(): Rectangle {
+        return new Rectangle(this.x, this.y, this.width, this.height)
+    }
+
+    scale(ratio: number): Camera {
+        return this.scaleTo(this.renderScale * ratio)
+    }
+
+    zoomIn() {
+        this.scaleTo(this.renderScale * 0.9)
+    }
+
+    zoomOut() {
+        this.scaleTo(this.renderScale * 1.1)
+    }
+
+    scaleTo(zoom: number): Camera {
+        this.renderScale = minmax(0.5, zoom, 6)
+        this.width = this.renderWidth * this.renderScale
+        this.height = this.renderHeight * this.renderScale
+        this.updateBorders()
+
+        console.log(this.renderWidth, this.renderScale, this.width)
+        this.dispatchEvent(new Event("updated"))
+        return this
     }
 }

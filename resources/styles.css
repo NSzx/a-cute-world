@@ -1,0 +1,19 @@
+#pause-screen {
+    background: rgba(10, 10, 10, 0.3);
+    color: white;
+    position: absolute;
+    inset: 0;
+    font-family: system-ui;
+    padding: 24px;
+}
+
+#controls {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 14px;
+}
+
+.hidden {
+    display: none;
+}

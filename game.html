@@ -5,12 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>My Website</title>
-    <link rel="stylesheet" href="./resources/style.css">
+    <link rel="stylesheet" href="./resources/styles.css">
     <link rel="icon" href="./resources/favicon.ico" type="image/x-icon">
 </head>
 <body>
-<main id="world-container">
+<main tabindex="0" id="world-container">
+
+    <div id="pause-screen">
+        <h1>PAUSED</h1>
+        <div id="controls"></div>
+    </div>
 </main>
-<script src="./build/esbuild/index.js"></script>
+<script src="./build/esbuild/index.js" type="module"></script>
 </body>
 </html>
