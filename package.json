@@ -1,0 +1,14 @@
+{
+  "name": "a-cute-world",
+  "version": "1.0.0",
+  "license": "MIT",
+  "scripts": {
+    "compile": "rimraf build/tsc && tsc --build",
+    "esbuild": "rimraf build/esbuild && node esbuild.mjs"
+  },
+  "dependencies": {
+    "esbuild": "^0.23.0",
+    "typescript": "^5.5.4",
+    "rimraf": "^6.0.1"
+  }
+}
