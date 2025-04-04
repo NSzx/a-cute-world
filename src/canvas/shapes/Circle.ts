@@ -54,6 +54,10 @@ export class Circle extends CircleProperties {
         return new Circle(this.x, this.y, this.radius, theta)
     }
 
+    rotate(angle: number, radius?: number): Circle {
+        return new Circle(this.x, this.y, radius ?? this.radius, this.theta + angle)
+    }
+
     applyVector(v: Vector): Circle {
         return new Circle(this.x + v.x, this.y + v.y, this.radius, v.d)
     }
@@ -93,4 +97,7 @@ export class Circle extends CircleProperties {
         return new Circle(x, y, radius, theta)
     }
 
+    toVector() {
+        return Vector.ab(this, this.front)
+    }
 }

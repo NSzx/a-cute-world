@@ -7,6 +7,7 @@ import {
 import { ShapeStyles } from "./index"
 import { Shape } from "./shapes/Shape"
 import {
+    PI2,
     PI6,
     TWOPI
 } from "../utils/constants"
@@ -16,6 +17,8 @@ import { curve } from "./libs/curve"
 import { Item } from "../world/items/Item"
 import { Vector } from "../physics/Vector"
 import { Point } from "./shapes/Point"
+import { vSum } from "../physics"
+import { Circle } from "./shapes/Circle"
 
 
 export class CanvasHelper {
@@ -67,15 +70,19 @@ export class CanvasHelper {
         }
     }
 
+    private getSidePoint(c: Circle, ref: Circle | undefined, rotation: number): WithCoordinates {
+        return ref ? c.applyVector(vSum(c.toVector(), ref.toVector()).withMagnitude(c.radius).rotate(rotation)) : c.outerPoint(rotation)
+    }
+
     shape(s: Shape, styles: ShapeStyles, debug = false) {
         this.ctx.beginPath()
         const head = s.chain[0]
         let points = [
             head.front,
             head.outerPoint(-PI6),
-            ...s.chain.map(c => c.right),
+            ...s.chain.map((c, i) => this.getSidePoint(c, s.chain[i + 1], -PI2)),
             last(s.chain).back,
-            ...s.chain.slice().reverse().map(c => c.left),
+            ...s.chain.slice().reverse().map((c, i, reversed) => this.getSidePoint(c, reversed[i - 1], PI2)),
             head.outerPoint(PI6),
         ]
 
@@ -148,23 +155,23 @@ export class CanvasHelper {
     }
 
     private debugShape(shape: Shape, color: string = "white") {
-        for (let circle of shape.chain) {
+        shape.chain.forEach((circle, index) => {
             this.draw(circle, { lineWidth: 2, strokeStyle: color })
             this.arrow(circle, circle.front, { lineWidth: 1, strokeStyle: color })
-            this.line(circle, circle.outerPoint(shape.minAngle), { lineWidth: 1, strokeStyle: color })
-            this.line(circle, circle.outerPoint(-shape.minAngle), { lineWidth: 1, strokeStyle: color })
-        }
-    }
-
-    private debugCoordinates(points: WithCoordinates[], color = "red"): void {
-        points.forEach((p) => {
-            this.point(p, 2, { fillStyle: color })
-            this.setFont(10, "arial", color)
-            this.ctx.fillText("[" + Math.round(p.x) + "-" + Math.round(p.y) + "]", p.x + 3, p.y)
+            this.line(circle, circle.outerPoint(shape.articulationsLeeway[index].minAngle), { lineWidth: 1, strokeStyle: color })
+            this.line(circle, circle.outerPoint(shape.articulationsLeeway[index].maxAngle), { lineWidth: 1, strokeStyle: color })
         })
     }
 
-    pattern(shape: WithIntersections, img: HTMLImageElement): void {
+    debugCoordinates(points: WithCoordinates[], color = "red") {
+        points.forEach((p, i) => {
+            this.point(p, 2, { fillStyle: color })
+            this.setFont(10, "arial", color)
+            this.ctx.fillText(`${ i } [${ Math.round(p.x) }, ${ Math.round(p.y) }]`, p.x + 3, p.y)
+        })
+    }
+
+    pattern(shape: WithIntersections, img: HTMLImageElement) {
         let pattern = this.ctx.createPattern(img, "repeat")!
         this.draw(shape, { fillStyle: pattern })
     }
