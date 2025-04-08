@@ -14,6 +14,7 @@ export abstract class MovingItem extends Item {
     abstract readonly friction: number
     abstract readonly acceleration: number
     abstract readonly windResistance: number
+
     private _uncappedVMax?: number
     get uncappedVMax(): number {
         // uncappedVMax est tel que (uncappedVMax+20) * 0.7 = uncappedVMax

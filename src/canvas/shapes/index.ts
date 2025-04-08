@@ -1,5 +1,3 @@
-import { Vector } from "../../physics/Vector"
-
 export interface WithCoordinates {
     x: number
     y: number
@@ -7,8 +5,6 @@ export interface WithCoordinates {
 
 export abstract class WithIntersections {
     abstract intersect(other: WithIntersections): boolean
-
-    abstract applyVector(vector: Vector): WithIntersections
 
     abstract move(dx: number, dy: number): WithIntersections
 

@@ -67,17 +67,16 @@ export class Game {
 
             this.handleInputs(inputs)
 
-            if (this.paused) {
-                this.world.draw(this.helper)
-            } else {
+            if (!this.paused) {
                 this.world.update(inputs, this.controlledItem)
                 if (this.controlledItem == undefined && this.trackedItem == undefined) {
                     this.camera.update(inputs)
                 } else {
                     this.camera.track((this.controlledItem ?? this.trackedItem)!)
                 }
-                this.world.draw(this.helper)
+                this.world.wrapItems(this.camera)
             }
+            this.world.draw(this.helper, this.camera)
             this.hud.draw(this.helper, this.camera, inputs)
         }
     }

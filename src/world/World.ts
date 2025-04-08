@@ -2,7 +2,6 @@ import { Creature } from "./items/moving/creatures/Creature"
 import { Inputs } from "../controls/Inputs"
 import { Item } from "./items/Item"
 import { CanvasHelper } from "../canvas/CanvasHelper"
-import { RectangleProperties } from "../canvas/shapes"
 import { Rectangle } from "../canvas/shapes/Rectangle"
 import { Fly } from "./items/moving/creatures/airborne/Fly"
 import { WeatherConditions } from "./Weather"
@@ -47,21 +46,21 @@ export class World {
         ]
     }
 
-    inbound: RectangleProperties
-    outOfBounds: RectangleProperties
 
     grass?: HTMLImageElement
+    readonly halfWidth: number
+    readonly halfHeight: number
 
     constructor(public readonly width: number,
                 public readonly height: number) {
-        this.inbound = Rectangle.fromBorders(0, 0, width, height)
-        this.outOfBounds = Rectangle.fromBorders(-width, -width, width * 3, height * 3)
+        this.halfWidth = Math.floor(this.width / 2)
+        this.halfHeight = Math.floor(this.height / 2)
         repeat(60, () => this.flying.push(Fly.random()))
         repeat(30, () => this.walking.push(Snake.random()))
         repeat(30, () => this.walking.push(Lezard.random()))
         this.walking.push(new Lezard(
-            WORLD_WIDTH/2,
-            WORLD_HEIGHT/2,
+            WORLD_WIDTH / 2,
+            WORLD_HEIGHT / 2,
             20,
             0,
             Math.round(rand(0, 360))
@@ -75,16 +74,57 @@ export class World {
         this.allItems.forEach(i => i.update(this.currentWeather, i === controlledItem ? inputs : undefined))
     }
 
-    draw(helper: CanvasHelper) {
-        helper.rectangle(this.outOfBounds, { fillStyle: "#395732" })
+    wrapItems(camera: Rectangle): void {
+        this.allItems.forEach(i => {
+            const distanceX: number = i.mainShape.head.x - camera.x
+            if (distanceX > this.halfWidth) {
+                i.translate(-this.width, 0)
+            }
+            if (distanceX < -this.halfWidth) {
+                i.translate(this.width, 0)
+            }
+            const distanceY: number = i.mainShape.head.y - camera.y
+            if (distanceY > this.halfHeight) {
+                i.translate(0, -this.height)
+            }
+            if (distanceY < -this.halfHeight) {
+                i.translate(0, this.height)
+            }
+        })
+    }
 
-        if (this.grass) {
-            helper.pattern(this.inbound, this.grass)
-        } else {
-            helper.rectangle(this.inbound, { fillStyle: "#73c98e" })
-        }
+    private getFloor(nx: number, ny: number): Rectangle {
+        return Rectangle.fromBorders(nx * this.width, ny * this.height, (nx + 1) * this.width, (ny + 1) * this.height)
+    }
+
+    draw(helper: CanvasHelper, camera: Rectangle) {
+        const nx = Math.floor(camera.x / this.width)
+        const ny = Math.floor(camera.y / this.height)
+
+        this.drawFloor(helper, this.getFloor(nx, ny))
+        const neighbourFloors = [
+            this.getFloor(nx - 1, ny - 1),
+            this.getFloor(nx, ny - 1),
+            this.getFloor(nx + 1, ny - 1),
+            this.getFloor(nx - 1, ny),
+            //this.getFloor(nx, ny), // always drawn
+            this.getFloor(nx + 1, ny),
+            this.getFloor(nx - 1, ny + 1),
+            this.getFloor(nx, ny + 1),
+            this.getFloor(nx + 1, ny + 1),
+        ]
+        neighbourFloors.filter(f => camera.intersect(f))
+                       .forEach(f => this.drawFloor(helper, f))
 
         this.allItems.filter(i => helper.isVisible(i)).forEach(i => i.draw(helper))
+    }
+
+    private drawFloor(helper: CanvasHelper, floor: Rectangle) {
+        if (this.grass) {
+            helper.pattern(floor, this.grass)
+        } else {
+            helper.rectangle(floor, { fillStyle: "#73c98e" })
+        }
     }
 
     private loadResources(): void {

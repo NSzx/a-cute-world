@@ -62,6 +62,10 @@ export class Circle extends CircleProperties {
         return new Circle(this.x + v.x, this.y + v.y, this.radius, rotate ? v.d : this.theta)
     }
 
+    translate(dx: number, dy: number): Circle {
+        return new Circle(this.x + dx, this.y + dy, this.radius, this.theta)
+    }
+
     move(dx: number, dy: number): Circle {
         return new Circle(this.x + dx, this.y + dy, this.radius, Math.atan2(dy, dx))
     }

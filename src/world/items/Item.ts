@@ -23,19 +23,21 @@ export abstract class Item implements WithIntersections {
         return this.shapes[0]
     }
 
-    applyVector(vector: Vector): WithIntersections {
-        return this
-    }
-
     intersect(other: WithIntersections): boolean {
         return this.shapes.some(shape => shape.intersect(other))
     }
 
-    move(dx: number, dy: number): WithIntersections {
+    translate(dx: number, dy: number) {
+        this.shapes = this.shapes.map(s => s.translate(dx, dy))
         return this
     }
 
-    moveTo(x: number, y: number): WithIntersections {
-        return this
+    move(dx: number, dy: number) {
+        return this.translate(dx, dy)
+    }
+
+    moveTo(x: number, y: number) {
+        const translation = Vector.ab(this.mainShape.head, { x, y })
+        return this.translate(translation.x, translation.y)
     }
 }

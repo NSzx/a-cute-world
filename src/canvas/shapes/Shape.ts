@@ -58,7 +58,11 @@ export class Shape extends ShapeProperties {
         return new Shape(newChain, this.articulationsLeeway, this.skinTension, this.skinResolution, this.distances)
     }
 
-    move(dx: number, dy: number): WithIntersections {
+    translate(dx: number, dy: number): Shape {
+        return new Shape(this.chain.map(c => c.translate(dx, dy)), this.articulationsLeeway, this.skinTension, this.skinResolution, this.distances)
+    }
+
+    move(dx: number, dy: number): Shape {
         return this.applyVector(Vector.cartesian(dx, dy))
     }
 
