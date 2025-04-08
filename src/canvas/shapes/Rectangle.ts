@@ -54,10 +54,10 @@ export class Rectangle extends RectangleProperties {
 
     intersect(other: WithIntersections): boolean {
         if (other instanceof RectangleProperties) {
-            return this.left < other.right
-                   && this.right > other.left
-                   && this.top > other.bottom
-                   && this.bottom < other.top
+            return !(this.left > other.right ||
+                     this.right < other.left ||
+                     this.top > other.bottom ||
+                     this.bottom < other.top)
         }
         return other.intersect(this)
     }
