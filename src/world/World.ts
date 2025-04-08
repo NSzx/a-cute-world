@@ -15,6 +15,7 @@ import {
     WORLD_HEIGHT,
     WORLD_WIDTH
 } from "../utils/constants"
+import { Lezard } from "./items/moving/creatures/walking/Lezard"
 
 export class World {
 
@@ -56,12 +57,14 @@ export class World {
         this.inbound = Rectangle.fromBorders(0, 0, width, height)
         this.outOfBounds = Rectangle.fromBorders(-width, -width, width * 3, height * 3)
         repeat(60, () => this.flying.push(Fly.random()))
-        repeat(40, () => this.walking.push(Snake.random()))
-        this.flying.push(new Fly(
+        repeat(30, () => this.walking.push(Snake.random()))
+        repeat(30, () => this.walking.push(Lezard.random()))
+        this.walking.push(new Lezard(
             WORLD_WIDTH/2,
             WORLD_HEIGHT/2,
-            5,
-            40
+            20,
+            0,
+            Math.round(rand(0, 360))
         ))
         this.loadResources()
     }

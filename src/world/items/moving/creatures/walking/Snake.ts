@@ -10,7 +10,7 @@ import {
 } from "utils"
 import { Vector } from "../../../../../physics/Vector"
 import {
-    PI2,
+    PI3,
     PI4,
     PI6,
     TWOPI,
@@ -24,18 +24,18 @@ export class Snake extends Creature {
         return new Snake(
             rand(50, WORLD_WIDTH - 50),
             rand(50, WORLD_HEIGHT - 50),
-            rand(20, 30),
-            Math.round(rand(30, 50)),
+            rand(25, 40),
+            Math.round(rand(35, 60)),
             rand(0, TWOPI),
             Math.round(rand(0, 360)),
         )
     }
 
     v: Vector = Vector.polar(0, 0)
-    readonly vMax: number = 200
-    readonly maxAngle: number = 0.3
-    readonly friction: number = 0.5
-    readonly acceleration: number = 10
+    readonly vMax: number
+    readonly maxDirectionAngle: number = 0.3
+    readonly friction: number = 0.55
+    readonly acceleration: number = 11
     readonly windResistance: number = 1
 
 
@@ -46,8 +46,9 @@ export class Snake extends Creature {
                 orientation: number,
                 public hue: number) {
         super()
+        this.vMax = 9 + 3 * (Math.abs(this.hue - 180) / 180) // Red snakes ae fast 👀
         let head = new Circle(x, y, size, orientation)
-        let radii = [ 105, 90, ...new Array(length).fill(70).map(((r, i) => r - i * (70 - 4) / length)) ].map(r => r / 100)
+        let radii = [ 105, 90, ...new Array(length).fill(70).map(((r, i) => r - i * (70 - 7) / length)) ].map(r => r / 100)
         let chain = [ head ]
         let angle = rand(-0.3, 0.3)
         radii.forEach((r, i) => {
@@ -55,7 +56,7 @@ export class Snake extends Creature {
             chain.push(chain[i].chain(size / 2, r * size, angle))
         })
         this.shapes = [
-            new Shape(chain, 2.4, 0.4)
+            new Shape(chain, PI3, 0.7)
         ]
     }
 
@@ -85,6 +86,7 @@ export class Snake extends Creature {
         let eyesReference = this.mainShape.head.scale(0.8)
         helper.ellipse(eyesReference.left, this.size / 6, this.size / 4, eyesReference.theta + PI6, { fillStyle: "white" })
         helper.ellipse(eyesReference.right, this.size / 6, this.size / 4, eyesReference.theta - PI6, { fillStyle: "white" })
-
+        // helper.text(`${ this.v.m }`, this.mainShape.head)
+        // helper.text(`${ this.hue } ${ Math.round(this.v.m * 10 / 10) }/${ Math.round(this.vMax * 10) / 10 }`, this.mainShape.head)
     }
 }

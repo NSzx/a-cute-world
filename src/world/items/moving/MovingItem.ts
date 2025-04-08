@@ -10,7 +10,7 @@ import { WeatherConditions } from "../../Weather"
 export abstract class MovingItem extends Item {
     abstract v: Vector
     abstract readonly vMax: number
-    abstract readonly maxAngle: number
+    abstract readonly maxDirectionAngle: number
     abstract readonly friction: number
     abstract readonly acceleration: number
     abstract readonly windResistance: number
@@ -31,7 +31,7 @@ export abstract class MovingItem extends Item {
     }
 
     handlePhysics(weather: WeatherConditions, direction: Vector) {
-        let correctedDirection = Vector.polar(restrictAngle(direction.d, this.v.d, this.maxAngle), direction.m)
+        let correctedDirection = Vector.polar(restrictAngle(direction.d, this.v.d, -this.maxDirectionAngle, this.maxDirectionAngle), direction.m)
         this.v = vSum(this.v, correctedDirection.multiply(this.acceleration)).multiply(this.friction).cap(this.vMax)
     }
 }
