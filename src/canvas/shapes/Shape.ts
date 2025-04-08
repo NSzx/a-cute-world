@@ -72,4 +72,22 @@ export class Shape extends ShapeProperties {
         }
         return this.chain.some(point => point.intersect(other))
     }
+
+    /**
+     * Simplified version of Forward And Backward Reaching Inverse Kinematics
+     * @param anchor
+     * @param target
+     */
+    fabrik(anchor: Circle, target: WithCoordinates): Shape {
+        let newChain = forwardReachingKinematics(this.chain, anchor, this.distances, this.articulationsLeeway)
+        let counter = 0
+        let translationVector = Vector.ab(last(newChain), target)
+        while (translationVector.m > 1 && counter < 7) {
+            newChain = newChain.map(c => c.applyVector(translationVector, false))
+            newChain = forwardReachingKinematics(newChain, anchor, this.distances, this.articulationsLeeway)
+            translationVector = Vector.ab(last(newChain), target)
+            counter++
+        }
+        return new Shape(newChain, this.articulationsLeeway, this.skinTension, this.skinResolution, this.distances)
+    }
 }
