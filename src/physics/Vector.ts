@@ -47,4 +47,12 @@ export class Vector {
     cap(mMax: number): Vector {
         return Vector.polar(this.d, Math.min(this.m, mMax))
     }
+
+    withMagnitude(m: number): Vector {
+        return Vector.polar(this.d, m)
+    }
+
+    rotate(angle: number): Vector {
+        return Vector.polar(this.d + angle, this.m)
+    }
 }
