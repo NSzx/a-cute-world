@@ -67,7 +67,7 @@ export class Camera extends withEvents(Rectangle) {
     }
 
     scaleTo(zoom: number): Camera {
-        this.renderScale = minmax(0.5, zoom, 6)
+        this.renderScale = minmax(0.5, zoom, 5)
         this.width = this.renderWidth * this.renderScale
         this.height = this.renderHeight * this.renderScale
         this.updateBorders()
