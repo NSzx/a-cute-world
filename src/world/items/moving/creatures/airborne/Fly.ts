@@ -10,7 +10,7 @@ import {
 } from "utils"
 import { Vector } from "../../../../../physics/Vector"
 import {
-    PI3,
+    PI12,
     PI4,
     PI6,
     TWOPI,
@@ -47,7 +47,7 @@ export class Fly extends Creature {
             new Shape([
                 head,
                 body,
-            ], 5 * PI6, 0.55)
+            ], PI12, 0.55)
         ]
     }
 
