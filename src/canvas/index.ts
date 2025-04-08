@@ -12,3 +12,11 @@ export type ShapeStyles = {
     strokeStyle?: string | CanvasGradient | CanvasPattern
     fillStyle?: string | CanvasGradient | CanvasPattern
 }
+
+export type FontStyles = {
+    fontsize?: number,
+    fontFamily?: string,
+    color?: string,
+    align?: CanvasTextAlign,
+    baseline?: CanvasTextBaseline
+}

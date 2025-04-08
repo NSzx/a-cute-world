@@ -4,7 +4,10 @@ import {
     WithCoordinates,
     WithIntersections
 } from "./shapes"
-import { ShapeStyles } from "./index"
+import {
+    FontStyles,
+    ShapeStyles
+} from "./index"
 import { Shape } from "./shapes/Shape"
 import {
     PI2,
@@ -51,11 +54,16 @@ export class CanvasHelper {
         this.ctx.fillStyle = color
     }
 
-    setFontStyles(styles: { fontsize?: number, fontFamily?: string, color?: string, align?: CanvasTextAlign, baseline?: CanvasTextBaseline }) {
+    setFontStyles(styles: FontStyles) {
         this.ctx.font = `${ styles.fontsize ?? 10 }px ${ styles.fontFamily ?? "arial" }`
         this.ctx.textBaseline = styles.baseline ?? "top"
         this.ctx.textAlign = styles.align ?? "left"
         this.ctx.fillStyle = styles.color ?? "black"
+    }
+
+    text(text: string, origin: WithCoordinates, styles?: FontStyles) {
+        this.setFontStyles(styles ?? {})
+        this.ctx.fillText(text, origin.x, origin.y)
     }
 
     draw(shape: WithIntersections, styles: ShapeStyles, debug = false) {
