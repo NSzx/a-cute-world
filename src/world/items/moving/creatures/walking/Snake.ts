@@ -33,7 +33,7 @@ export class Snake extends Creature {
 
     v: Vector = Vector.polar(0, 0)
     readonly vMax: number = 200
-    readonly maxAngle: number = 0.3
+    readonly maxDirectionAngle: number = 0.3
     readonly friction: number = 0.5
     readonly acceleration: number = 10
     readonly windResistance: number = 1

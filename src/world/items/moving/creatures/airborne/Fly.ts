@@ -34,7 +34,7 @@ export class Fly extends Creature {
 
     v: Vector = Vector.polar(0, 0)
     readonly vMax: number = 200
-    readonly maxAngle: number = 5 * PI6
+    readonly maxDirectionAngle: number = 5 * PI6
     readonly friction: number = 0.7
     readonly acceleration: number = 20
     readonly windResistance: number = 1
