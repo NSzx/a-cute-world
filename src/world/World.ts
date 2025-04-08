@@ -129,7 +129,7 @@ export class World {
 
     private loadResources(): void {
         const grass = new Image()
-        grass.src = "/resources/grass.jpg"
+        grass.src = "./resources/grass.jpg"
         grass.onload = () => {
             this.grass = grass
         }
